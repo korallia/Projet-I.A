@@ -23,11 +23,12 @@ class KNN:
 
         tab_indices =self.__tab_distance[:, 0].argsort()
         tab_indices_trier = tab_indices[:self.nbr_voisins]
-        return self.__tab_distance[tab_indices_trier])
+        return self.__tab_distance[tab_indices_trier]
 
 
     def __determiner_type(resultat):
         pass
+    #####continuer######
         
         
        
