@@ -92,6 +92,8 @@ images_a_ajouter = np.array(
 knn.rajouter_image_a_espace_solution(images_a_ajouter)
 point = np.array([1,4,6])
 knn.calcule_distance(point)        
+
+
         
 
 
