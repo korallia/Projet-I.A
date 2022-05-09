@@ -48,7 +48,7 @@ class KNN:
             return resultats[plusfrequents[0]][1] # 1 plus frequent on prend lui
         else:
             return resultats[0][1]  # pas 2 frequents, on prend le plus proche
-    #####continuer######
+  
         
         
        
@@ -103,8 +103,8 @@ class KNN:
 
     def algo_knn(self,image):
         resultat =self.__calcule_distance(image)
-        type = self.__determiner_type(resultat)
-        return type
+        typ = self.__determiner_type(resultat)
+        return typ
 
        
        

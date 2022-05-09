@@ -3,9 +3,9 @@ import numpy as np
 from KNN import KNN
 
 class image_processe:
-        def __init__(self,knn, max_distance=1, nbr_voisins=3, ):
+        def __init__(self, max_distance=1, nbr_voisins=3 ):
             self.__nbr_index = 3
-            self.knn = knn
+            self.knn = KNN()
 
     #fonction privé
         def __calculPerimetre(self,image):
@@ -50,6 +50,35 @@ class image_processe:
         def __calculAire(self,image):
             return np.sum(image)
 
+        def __centroidYX(self, image):
+            aire = self.__calculAire(image)
+            c, r = np.meshgrid(np.arange(image.shape[1]), np.arange(image.shape[0]))
+            return (np.sum(r * image), np.sum(c * image)) / aire
+        
+        def __distance_centroide(self, image):
+            centroide= self.__centroidYX(image)
+
+        # Créer un meshgrid avec dimensions de notre image
+            c, r = np.meshgrid(np.arange(image.shape[1]), np.arange(image.shape[0]))
+            print("image.shape[0]: ", image.shape[0], 
+                "\timage.shape[1]: ", image.shape[1], 
+                "\timage.shape: ", image.shape)
+
+        # Sortir les coord des 1 de l'image avec les 2 matrices retournees par le meshgrid
+        # print("\nles X des cases avec des 1:\n", c[image>0])
+        # print("les Y des cases avec des 1:\n", r[image>0])
+
+        # Créer une matrice unidimensionnelle pour stocker les calculs de distance
+            calcul = np.zeros((c[image>0].shape[0]))
+            calcul[:] = (   (c[image>0] - centroide[1])**2 + 
+                        (r[image>0] - centroide[0])**2      )**0.5    
+            return calcul
+        # Avec la matrice de distances, on fait np.std(calcul) et ça donne l'écart-type (O)
+        # On peut, je crois, "normaliser" l'écart-type (O), avec le range, en faisant : 
+        # 2 x écart-type / range, donc  : 2*(O) / (max-min), 
+        # car le range est toujours plus grand que 6 * écart-types pour 99.9...%, 
+        # donc on aura un quotient plus petit que 1...
+
         def __calculComplexite(self,image):
             perimetre = self.__calculPerimetre(image)
             aire = self.__calculAire(image)
@@ -59,9 +88,19 @@ class image_processe:
             return abs(simpliciter)
 
         def __indice2(self,image):
-            return 1
+            data_distance = self.__distance_centroide(image)
+            min =  np.min(data_distance)
+            max = np.max(data_distance)
+            rayon_i_sur_c = min/max
+            return rayon_i_sur_c
+
         def __indice3(self,image):
-            return 0.5
+            data_aire = self.__calculAire(image)
+            data_distance = self.__distance_centroide(image)
+            max = np.max(data_distance)
+            aire_circonscrit = np.pi*max**2       
+            aire_sur_aire_c = data_aire / aire_circonscrit 
+            return aire_sur_aire_c
 
         def __singleImageProcessing(self, arrayimage):
             if ( len(arrayimage) == 2 ):
@@ -89,15 +128,18 @@ class image_processe:
                     indice3
                     ])
 
+            @property
+            def nbr_metrics(self):
+                return self.__nbr_metrics
+            @property.setter
+            def nbr_metrics(self,value):
+                self.__nbr_metrics = value
+
+   
+      
 
 
-    #fonction public 
-       #@property
-        #def knn(self):
-        #return self.__knn
-        #@property
-        #def nbr_metrics(self)
-        #return self.__nbr_metrics
+        
 
 
         
@@ -246,15 +288,15 @@ images_a_calculer = np.array(        #différentes images de départ pour tests
     ])
       
 
-#imgpro = image_processe()
-#imgpro.load_practice_images(images_a_calculer)
+imgpro = image_processe()
+imgpro.load_practice_images(images_a_calculer)
 #type = imgPro.process_unknown_image(image_a_calculer)
 #print(nom_images[type])
 #print(images_a_calculer[:,0])
-array = np.zeros((2,2,1))
-print("-----------")
-id_list = np.array([0,1,])
-array[:,0,0] = id_list[:]
-array[:,1,0] = image_list
-print(array)
+#array = np.zeros((2,2,1))
+#print("-----------")
+#id_list = np.array([1,2,])
+#array[:,0,0] = id_list[:]
+#array[:,1,0] = image_list
+#print(array)
 
