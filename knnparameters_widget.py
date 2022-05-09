@@ -19,24 +19,27 @@ from PySide6.QtGui import  (QImage, QPixmap, QIcon, QPainter, QFont, QPen, QBrus
 from __feature__ import snake_case, true_property 
 
 class Knnparameters_widget(QtWidgets.QWidget):
+    knn_changed = Signal(int)
+    max_dist_changed = Signal(int)
+
+
+
     def __init__(self, parent = None):
         super().__init__(parent)
         transf_widget_size = QSize(200, 200)
         main_layout = QVBoxLayout()
-        self.knn_real = 6
-        self.max_dist_real = 5
-   
-        
+        self.knn_real = 0
+        self.max_dist_real = 0
 
 
         submain_layout = QVBoxLayout()
         container_groupbox = QGroupBox("Knn parameters")
-        scroll_bar_1 = QScrollBar()
-        scroll_bar_2 = QScrollBar()
+        self.scroll_bar_1 = QScrollBar()
+        self.scroll_bar_2 = QScrollBar()
         self.knn_value = QLabel(f"K = {self.knn_real}" )
         self.knn_value.alignment = Qt.AlignCenter
-        self.max_dist = QLabel(f"Max dist = {self.max_dist_real}")
-        self.max_dist.alignment = Qt.AlignCenter
+        self.max_dist = QLabel(f"Max dist = {self.max_dist_real}") 
+        self.max_dist.alignment = Qt.AlignCenter                        #TWEEKS
         
         
         
@@ -44,25 +47,30 @@ class Knnparameters_widget(QtWidgets.QWidget):
         param_2_layout = QHBoxLayout()
 
         param_1_layout.add_widget(self.knn_value)
-        param_1_layout.add_widget(scroll_bar_1)
+        param_1_layout.add_widget(self.scroll_bar_1)
         param_2_layout.add_widget(self.max_dist)
-        param_2_layout.add_widget(scroll_bar_2)
+        param_2_layout.add_widget(self.scroll_bar_2)
 
+        #TWEEKS
+        self.scroll_bar_1.orientation = Qt.Horizontal
+        self.scroll_bar_2.orientation = Qt.Horizontal
+        self.scroll_bar_1.fixed_width = 200
+        self.scroll_bar_2.fixed_width = 200
+        self.scroll_bar_1.value = 0
+        self.scroll_bar_2.value = 0
+        self.scroll_bar_1.set_minimum = 0
+        self.scroll_bar_1.maximum = 1000
+        self.scroll_bar_2.set_minimum = 0
+        self.scroll_bar_2.maximum = 100
 
-        scroll_bar_1.setOrientation(Qt.Horizontal)
-        scroll_bar_2.setOrientation(Qt.Horizontal)
-        scroll_bar_1.set_fixed_width(200)
-        scroll_bar_2.set_fixed_width(200)
-        scroll_bar_1.setValue(0)
-        scroll_bar_2.setValue(0)
-        scroll_bar_1.setRange(0,100)
-        scroll_bar_2.setRange(0,100)
-
+    
+        
+        self.scroll_bar_1.valueChanged.connect(self.update_scroll)
+        self.scroll_bar_2.valueChanged.connect(self.update_scroll)
 
         submain_layout.add_layout(param_1_layout)
         submain_layout.add_layout(param_2_layout)
 
-        
        
         container_groupbox.set_layout(submain_layout)
 
@@ -71,6 +79,29 @@ class Knnparameters_widget(QtWidgets.QWidget):
         
 
         self.set_layout(main_layout) 
+
+    def update_scroll(self):
+        self.knn_real =  self.scroll_bar_1.value
+        self.max_dist_real = self.scroll_bar_2.value
+
+        self.knn_value.text = (f"K = {self.knn_real}")
+        self.max_dist.text = (f"Max dist = {self.max_dist_real/100}")
+        self.knn_changed.emit(self.knn_real)
+        self.max_dist_changed.emit(self.max_dist_real)
+
+    @property
+    def knn_actual_value(self):
+        return self.knn_real
+        
+    @property
+    def knn_max_dist(self):
+        return self.max_dist_real/100
+    
+    
+
+        
+
+        
         
     
     

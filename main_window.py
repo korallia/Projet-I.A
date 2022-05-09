@@ -1,4 +1,5 @@
 import sys
+from matplot import MPLApp
 
 from db_credential import PostgreSQLCredential
 from klustr_dao import PostgreSQLKlustRDAO
@@ -7,6 +8,7 @@ from klustr_widget import KlustRDataSourceViewWidget
 from dataset_widget import Dataset_Widget
 from singletest_widget import Singletest_widget
 from knnparameters_widget import Knnparameters_widget
+from mpl_scatter_plot import MPL_Scatter_plot
 
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import Qt, QSize
@@ -40,16 +42,20 @@ class Tab_widget(QtWidgets.QTabWidget):
         self.tab_klstr_widget.set_layout(layout)
 
     def get_classication_widget(self):
+        self.dataset_widget = Dataset_Widget()
+        self.single_test_widget = Singletest_widget()
+        self.knnparameters_widget = Knnparameters_widget()
         conteneur_principal = QHBoxLayout()
         conteneur_widget = QVBoxLayout()
         conteneur_graphique_3d = QLabel()
         conteneur_graphique_3d.set_fixed_size(QSize(500,500))
-        button_about = QPushButton("About")
-        
+        conteneur_graphique_3d = MPLApp()
 
-        conteneur_widget.add_widget(Dataset_Widget())
-        conteneur_widget.add_widget(Singletest_widget())
-        conteneur_widget.add_widget(Knnparameters_widget())
+        button_about = QPushButton("About")
+
+        conteneur_widget.add_widget(self.dataset_widget)
+        conteneur_widget.add_widget(self.single_test_widget)
+        conteneur_widget.add_widget(self.knnparameters_widget)
         conteneur_widget.add_widget(button_about)
         conteneur_principal.add_layout(conteneur_widget)
         conteneur_principal.add_widget(conteneur_graphique_3d)
@@ -57,24 +63,59 @@ class Tab_widget(QtWidgets.QTabWidget):
         
         self.tab_classification_widget.set_layout(conteneur_principal)
 
-
-        
-
-
-
         
 
 class Main_window(QtWidgets.QMainWindow):
     def __init__(self, parent = None):
         super().__init__(parent)
+        self.tag_image_list = []
+        self.binary_image_list = []
+        self.image_to_identify = None
+        self.knn_value = None
+        self.knn_max_dist_value = None
 
-        self.set_central_widget(Tab_widget())        
+        self.tab_widget = Tab_widget()
+        self.tab_widget.dataset_widget.dataset_changed.connect(self.tab_widget.single_test_widget.change_dataset)
+        self.tab_widget.dataset_widget.dataset_changed.connect(self.get_infos_knn_from_dataset)
+
+        self.tab_widget.single_test_widget.image_binaire_etat.connect(self.get_infos_knn_from_singletest)
+        self.tab_widget.single_test_widget.classify_button.clicked.connect(self.knn_function_placeholder)
+
+
+        self.tab_widget.knnparameters_widget.knn_changed.connect(self.get_infos_knn_parameters)
+        self.tab_widget.knnparameters_widget.max_dist_changed.connect(self.get_infos_knn_parameters)
+
+
+        self.set_central_widget(self.tab_widget)  
+
+    def get_infos_knn_from_dataset(self):
+        self.tag_image_list = self.tab_widget.dataset_widget.tag_list_of_converted_image
+        self.binary_image_list = self.tab_widget.dataset_widget.image_converted_to_binary
+        print(self.tag_image_list)
+        print(self.binary_image_list)
+        
+
+    def get_infos_knn_from_singletest(self):
+        self.image_to_identify = self.tab_widget.single_test_widget.current_binary_image
+        #print(self.image_to_identify)
+
+    def get_infos_knn_parameters(self):
+        self.knn_value = self.tab_widget.knnparameters_widget.knn_actual_value
+        self.knn_max_dist_value = self.tab_widget.knnparameters_widget.knn_max_dist
+        #print(self.knn_value)
+        #print(self.knn_max_dist_value)
+
+    def knn_function_placeholder(self):
+        #intervient quand classify is clicked
+        print("pipi")
+        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
 
     main_window = Main_window()
+    main_window.get_infos_knn_from_dataset()
     main_window.window_title = 'Main'
     main_window.show()
     sys.exit(app.exec_())    
