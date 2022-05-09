@@ -3,9 +3,9 @@ import numpy as np
 from KNN import KNN
 
 class image_processe:
-        def __init__(self, max_distance=1, nbr_voisins=3 ):
+        def __init__(self,knn, max_distance=1, nbr_voisins=3, ):
             self.__nbr_index = 3
-            self.knn = KNN(max_distance, nbr_voisins, )
+            self.knn = knn
 
     #fonction privé
         def __calculPerimetre(self,image):
@@ -134,6 +134,29 @@ image_a_calculer = np.array([
         [0,0,0,0,0,0],
         [0,0,0,0,0,0]   
     ])
+image1 = np.array([
+        [0,0,0,0,0,0],          # Gros rectangle
+        [0,0,0,0,0,0], 
+        [0,1,1,1,0,0], 
+        [0,1,1,1,0,0], 
+        [0,1,1,1,0,0], 
+        [0,0,0,0,0,0],
+        [0,0,0,0,0,0]   
+    ])
+image2 = np.array([
+        [0,0,0,0,0,0],        # Petit rectangle
+        [0,0,0,0,0,0], 
+        [0,1,1,1,0,0], 
+        [0,1,1,1,0,0], 
+        [0,1,1,1,0,0], 
+        [0,1,1,1,0,0],
+        [0,0,0,0,0,0]   
+        ])
+
+image_list = np.array([
+[image1],
+[image2],
+])
 
 
 nom_images = {
@@ -223,8 +246,15 @@ images_a_calculer = np.array(        #différentes images de départ pour tests
     ])
       
 
-imgpro = image_processe()
-imgpro.load_practice_images(images_a_calculer)
+#imgpro = image_processe()
+#imgpro.load_practice_images(images_a_calculer)
 #type = imgPro.process_unknown_image(image_a_calculer)
 #print(nom_images[type])
-  
+#print(images_a_calculer[:,0])
+array = np.zeros((2,2,1))
+print("-----------")
+id_list = np.array([0,1,])
+array[:,0,0] = id_list[:]
+array[:,1,0] = image_list
+print(array)
+
