@@ -1,3 +1,4 @@
+import array
 import numpy as np
 
 from KNN import KNN
@@ -5,7 +6,6 @@ from KNN import KNN
 class image_processe:
         def __init__(self, max_distance=1, nbr_voisins=3 ):
             self.__nbr_index = 3
-            self.knn = KNN()
 
     #fonction privé
         def __calculPerimetre(self,image):
@@ -128,42 +128,28 @@ class image_processe:
                     indice3
                     ])
 
-            @property
-            def nbr_metrics(self):
-                return self.__nbr_metrics
-            @property.setter
-            def nbr_metrics(self,value):
-                self.__nbr_metrics = value
-
-   
-      
-
+        @property
+        def nbr_metrics(self):
+            return self.__nbr_metrics
+        @property.setter
+        def nbr_metrics(self,value):
+            self.__nbr_metrics = value
 
         
-
-
-        
-
-
-        
-        def load_practice_images(self, images):
+        def load_practice_images(self, images,taglist,knn):
+            stack = np.zeros((0,2))
+            for key, _ in enumerate(images):
+                stack = np.append( stack, [(np.array([ taglist[key], images[key] ]))], axis=0)
+            
             func = np.vectorize(self.__singleImageProcessing,  signature='(m,n)->(o)')
-            processed = func(images)
-            self.knn.rajouter_image_a_espace_solution(processed)
+            processed = func(stack)
+            knn.rajouter_image_a_espace_solution(processed)
            
 
-        def process_unknown_image(self, image):
+        def process_unknown_image(self, image,knn):
             processed = np.array( self.__singleImageProcessing(image))
-            return self.knn.algo_knn(processed)
+            return knn.algo_knn(processed)
             
-
-
-
-
-
-        
-
-
 
 
 
@@ -195,10 +181,11 @@ image2 = np.array([
         [0,0,0,0,0,0]   
         ])
 
-image_list = np.array([
+image_list = [
 [image1],
 [image2],
-])
+[image2]
+]
 
 
 nom_images = {
@@ -288,15 +275,42 @@ images_a_calculer = np.array(        #différentes images de départ pour tests
     ])
       
 
-imgpro = image_processe()
-imgpro.load_practice_images(images_a_calculer)
+#imgpro = image_processe()
+#imgpro.load_practice_images(images_a_calculer)
 #type = imgPro.process_unknown_image(image_a_calculer)
-#print(nom_images[type])
+#
+# print(nom_images[type])
 #print(images_a_calculer[:,0])
 #array = np.zeros((2,2,1))
-#print("-----------")
-#id_list = np.array([1,2,])
-#array[:,0,0] = id_list[:]
+print("-----------")
+id_list = [1,2,3]
+#array[:,0,0] = id_list
 #array[:,1,0] = image_list
-#print(array)
+
+
+
+tag_list = np.array(id_list)
+print ( tag_list)
+tag_list = np.reshape(tag_list, ( len(tag_list), 1 ))
+print ( tag_list)
+print("------------")
+print ( image_list)
+images_np = np.array(image_list)
+print ( images_np)
+
+
+stack = np.zeros((0,2))
+for key, _ in enumerate(image_list):
+    stack = np.append( stack, [(np.array([ id_list[key], image_list[key] ]))], axis=0)
+print( "------------------")
+print( stack)
+
+
+#stack = np.vstack((tag_list, images_np ))
+print ( stack)
+arrays_list = np.zeros((3,2,1))
+print ( arrays_list)
+arrays_list[:] = tag_list[:],images_np[:]
+print(arrays_list)
+
 
