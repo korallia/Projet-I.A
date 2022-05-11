@@ -4,8 +4,9 @@ import numpy as np
 from KNN import KNN
 
 class image_processe:
-        def __init__(self, max_distance=1, nbr_voisins=3 ):
+        def __init__(self):
             self.__nbr_index = 3
+            self.__private = True
 
     #fonction privé
         def __calculPerimetre(self,image):
@@ -87,20 +88,17 @@ class image_processe:
             simpliciter = 1 -c
             return abs(simpliciter)
 
-        def __indice2(self,image):
+        def __rayon_i_sur_c(self,image):
             data_distance = self.__distance_centroide(image)
             min =  np.min(data_distance)
             max = np.max(data_distance)
-            rayon_i_sur_c = min/max
-            return rayon_i_sur_c
-
-        def __indice3(self,image):
+            return   min/max
+        def __aire_sur_aire_c(self,image):
             data_aire = self.__calculAire(image)
             data_distance = self.__distance_centroide(image)
             max = np.max(data_distance)
             aire_circonscrit = np.pi*max**2       
-            aire_sur_aire_c = data_aire / aire_circonscrit 
-            return aire_sur_aire_c
+            return data_aire / aire_circonscrit 
 
         def __singleImageProcessing(self, arrayimage):
             if ( len(arrayimage) == 2 ):
@@ -110,8 +108,8 @@ class image_processe:
                 image = arrayimage
                 tag = ""
             indice1 = self.__calculComplexite(image)
-            indice2 = self.__indice2(image)
-            indice3 = self.__indice3(image)
+            indice2 = self.__rayon_i_sur_c(image)
+            indice3 = self.__aire_sur_aire_c(image)
 
 
             if (tag != ""):
@@ -275,7 +273,7 @@ images_a_calculer = np.array(        #différentes images de départ pour tests
     ])
       
 
-#imgpro = image_processe()
+imgpro = image_processe()
 #imgpro.load_practice_images(images_a_calculer)
 #type = imgPro.process_unknown_image(image_a_calculer)
 #
@@ -314,3 +312,4 @@ arrays_list[:] = tag_list[:],images_np[:]
 print(arrays_list)
 
 
+imgpro.nbr_metrics = 2

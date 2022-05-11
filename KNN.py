@@ -111,7 +111,7 @@ class KNN:
 
    
         
-#knn = KNN(5)
+knn = KNN()
 images_a_ajouter = np.array(
     [
         [1,2,1,1],
@@ -124,7 +124,8 @@ images_a_ajouter = np.array(
 #knn.rajouter_image_a_espace_solution(images_a_ajouter)
 #point = np.array([1,4,6])
 #knn.calcule_distance(point)        
-
+knn.max_distance = 2
+print(knn.max_distance)
 
         
 
