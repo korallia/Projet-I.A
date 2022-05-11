@@ -42,13 +42,13 @@ class image_processe:
 
             print(perimetre)
             """
-
+            print(rslt)
             return np.sum(rslt[rslt==1])
             
 
            
         def __calculAire(self,image):
-            return np.sum(image)
+            return np.sum(image[image==1])
 
         def __centroidYX(self, image):
             aire = self.__calculAire(image)
@@ -83,7 +83,7 @@ class image_processe:
             perimetre = self.__calculPerimetre(image)
             aire = self.__calculAire(image)
 
-            c= (4*np.pi*aire)/perimetre**2
+            c= ((4*np.pi*aire)/perimetre**2)
             simpliciter = 1 -c
             return abs(simpliciter)
 
@@ -104,8 +104,10 @@ class image_processe:
 
         def __singleImageProcessing(self, arrayimage):
             if ( len(arrayimage) == 2 ):
-                tag = arrayimage[0][0]
-                image  = arrayimage[1][0]
+                tag = arrayimage[0]
+                image  = arrayimage[1]
+                print(image)
+                print("S'il-vous-plait biensur")
             else:
                 image = arrayimage
                 tag = ""
@@ -131,18 +133,23 @@ class image_processe:
         @property
         def nbr_metrics(self):
             return self.__nbr_metrics
-        @property.setter
+        @nbr_metrics.setter
         def nbr_metrics(self,value):
             self.__nbr_metrics = value
 
         
         def load_practice_images(self, images,taglist,knn):
+            # print(images)
+            # print("-----------------Q(-'.'-Q)-------------")
+            # print(taglist)
+            
             stack = np.zeros((0,2))
             for key, _ in enumerate(images):
                 stack = np.append( stack, [(np.array([ taglist[key], images[key] ]))], axis=0)
-            
-            func = np.vectorize(self.__singleImageProcessing,  signature='(m,n)->(o)')
+            print(stack)
+            func = np.vectorize(self.__singleImageProcessing,  signature='(m)->(o)')
             processed = func(stack)
+            
             knn.rajouter_image_a_espace_solution(processed)
            
 
@@ -153,164 +160,164 @@ class image_processe:
 
 
 
-image_a_calculer = np.array([
-        [0,0,0,0,0,0],          # Gros rectangle
-        [0,0,0,0,0,0], 
-        [0,1,1,1,0,0], 
-        [0,1,1,1,0,0], 
-        [0,1,1,1,0,0], 
-        [0,0,0,0,0,0],
-        [0,0,0,0,0,0]   
-    ])
-image1 = np.array([
-        [0,0,0,0,0,0],          # Gros rectangle
-        [0,0,0,0,0,0], 
-        [0,1,1,1,0,0], 
-        [0,1,1,1,0,0], 
-        [0,1,1,1,0,0], 
-        [0,0,0,0,0,0],
-        [0,0,0,0,0,0]   
-    ])
-image2 = np.array([
-        [0,0,0,0,0,0],        # Petit rectangle
-        [0,0,0,0,0,0], 
-        [0,1,1,1,0,0], 
-        [0,1,1,1,0,0], 
-        [0,1,1,1,0,0], 
-        [0,1,1,1,0,0],
-        [0,0,0,0,0,0]   
-        ])
+# image_a_calculer = np.array([
+#         [0,0,0,0,0,0],          # Gros rectangle
+#         [0,0,0,0,0,0], 
+#         [0,1,1,1,0,0], 
+#         [0,1,1,1,0,0], 
+#         [0,1,1,1,0,0], 
+#         [0,0,0,0,0,0],
+#         [0,0,0,0,0,0]   
+#     ])
+# image1 = np.array([
+#         [0,0,0,0,0,0],          # Gros rectangle
+#         [0,0,0,0,0,0], 
+#         [0,1,1,1,0,0], 
+#         [0,1,1,1,0,0], 
+#         [0,1,1,1,0,0], 
+#         [0,0,0,0,0,0],
+#         [0,0,0,0,0,0]   
+#     ])
+# image2 = np.array([
+#         [0,0,0,0,0,0],        # Petit rectangle
+#         [0,0,0,0,0,0], 
+#         [0,1,1,1,0,0], 
+#         [0,1,1,1,0,0], 
+#         [0,1,1,1,0,0], 
+#         [0,1,1,1,0,0],
+#         [0,0,0,0,0,0]   
+#         ])
 
-image_list = [
-[image1],
-[image2],
-[image2]
-]
-
-
-nom_images = {
- 0:"Gros Rectangle",
- 1:"Petit Rectangle",
- 2:"Gros H",
- 3:"Moyen H",
- 4:"Gros L",
- 5:"Étoile"
-}
+# image_list = [
+# [image1],
+# [image2],
+# [image2]
+# ]
 
 
-images_a_calculer = np.array(        #différentes images de départ pour tests
-    [
-      [  [0],
+# nom_images = {
+#  0:"Gros Rectangle",
+#  1:"Petit Rectangle",
+#  2:"Gros H",
+#  3:"Moyen H",
+#  4:"Gros L",
+#  5:"Étoile"
+# }
+
+
+# images_a_calculer = np.array(        #différentes images de départ pour tests
+#     [
+#       [  [0],
         
-            [np.array([
-            [0,0,0,0,0,0],          # Gros rectangle
-            [0,1,1,1,1,0], 
-            [0,1,1,1,1,0], 
-            [0,1,1,1,1,0], 
-            [0,1,1,1,1,0], 
-            [0,1,1,1,1,0],
-            [0,0,0,0,0,0]   
-        ])]
-      ]
-    ,
-     [[1],
+#             [np.array([
+#             [0,0,0,0,0,0],          # Gros rectangle
+#             [0,1,1,1,1,0], 
+#             [0,1,1,1,1,0], 
+#             [0,1,1,1,1,0], 
+#             [0,1,1,1,1,0], 
+#             [0,1,1,1,1,0],
+#             [0,0,0,0,0,0]   
+#         ])]
+#       ]
+#     ,
+#      [[1],
         
-       [ np.array([
-        [0,0,0,0,0,0],        # Petit rectangle
-        [0,0,0,0,0,0], 
-        [0,1,1,1,0,0], 
-        [0,1,1,1,0,0], 
-        [0,1,1,1,0,0], 
-        [0,1,1,1,0,0],
-        [0,0,0,0,0,0]   
-        ])]]
-    ,
-     [[2],
+#        [ np.array([
+#         [0,0,0,0,0,0],        # Petit rectangle
+#         [0,0,0,0,0,0], 
+#         [0,1,1,1,0,0], 
+#         [0,1,1,1,0,0], 
+#         [0,1,1,1,0,0], 
+#         [0,1,1,1,0,0],
+#         [0,0,0,0,0,0]   
+#         ])]]
+#     ,
+#      [[2],
         
-     [np.array([
-        [0,0,0,0,0,0],        # Gros H
-        [0,1,0,0,1,0], 
-        [0,1,0,0,1,0], 
-        [0,1,1,1,1,0], 
-        [0,1,0,0,1,0], 
-        [0,1,0,0,1,0],
-        [0,0,0,0,0,0]   
-    ])]],
+#      [np.array([
+#         [0,0,0,0,0,0],        # Gros H
+#         [0,1,0,0,1,0], 
+#         [0,1,0,0,1,0], 
+#         [0,1,1,1,1,0], 
+#         [0,1,0,0,1,0], 
+#         [0,1,0,0,1,0],
+#         [0,0,0,0,0,0]   
+#     ])]],
     
-     [
-         [3],
-     [np.array([
+#      [
+#          [3],
+#      [np.array([
          
-         [0,0,0,0,0,0],        # Moyen H
-         [0,1,0,1,0,0], 
-         [0,1,0,1,0,0], 
-         [0,1,1,1,0,0], 
-         [0,1,0,1,0,0], 
-         [0,1,0,1,0,0],
-         [0,0,0,0,0,0]   
-        ])]],
-     [
-         [4],
-     [np.array([
-        [0,0,0,0,0,0],        # Gros L
-        [0,1,1,0,0,0], 
-        [0,1,1,0,0,0], 
-        [0,1,1,0,0,0], 
-        [0,1,1,0,0,0], 
-        [0,1,1,1,1,1],
-        [0,1,1,1,1,1]   
-        ])]],
-     [
-         [5],
-     [np.array([
-         [0,0,0,0,0,0],        # ~Étoile
-         [0,0,0,0,0,0], 
-         [0,1,0,0,0,0], 
-         [0,0,1,1,1,1], 
-         [0,0,1,0,0,0], 
-         [0,0,0,1,1,0],
-         [0,0,0,0,0,0]   
-         ])]
-      ]
-    ])
+#          [0,0,0,0,0,0],        # Moyen H
+#          [0,1,0,1,0,0], 
+#          [0,1,0,1,0,0], 
+#          [0,1,1,1,0,0], 
+#          [0,1,0,1,0,0], 
+#          [0,1,0,1,0,0],
+#          [0,0,0,0,0,0]   
+#         ])]],
+#      [
+#          [4],
+#      [np.array([
+#         [0,0,0,0,0,0],        # Gros L
+#         [0,1,1,0,0,0], 
+#         [0,1,1,0,0,0], 
+#         [0,1,1,0,0,0], 
+#         [0,1,1,0,0,0], 
+#         [0,1,1,1,1,1],
+#         [0,1,1,1,1,1]   
+#         ])]],
+#      [
+#          [5],
+#      [np.array([
+#          [0,0,0,0,0,0],        # ~Étoile
+#          [0,0,0,0,0,0], 
+#          [0,1,0,0,0,0], 
+#          [0,0,1,1,1,1], 
+#          [0,0,1,0,0,0], 
+#          [0,0,0,1,1,0],
+#          [0,0,0,0,0,0]   
+#          ])]
+#       ]
+#     ])
       
 
-#imgpro = image_processe()
-#imgpro.load_practice_images(images_a_calculer)
-#type = imgPro.process_unknown_image(image_a_calculer)
-#
-# print(nom_images[type])
-#print(images_a_calculer[:,0])
-#array = np.zeros((2,2,1))
-print("-----------")
-id_list = [1,2,3]
-#array[:,0,0] = id_list
-#array[:,1,0] = image_list
+# #imgpro = image_processe()
+# #imgpro.load_practice_images(images_a_calculer)
+# #type = imgPro.process_unknown_image(image_a_calculer)
+# #
+# # print(nom_images[type])
+# #print(images_a_calculer[:,0])
+# #array = np.zeros((2,2,1))
+# print("-----------")
+# id_list = [1,2,3]
+# #array[:,0,0] = id_list
+# #array[:,1,0] = image_list
 
 
 
-tag_list = np.array(id_list)
-print ( tag_list)
-tag_list = np.reshape(tag_list, ( len(tag_list), 1 ))
-print ( tag_list)
-print("------------")
-print ( image_list)
-images_np = np.array(image_list)
-print ( images_np)
+# tag_list = np.array(id_list)
+# print ( tag_list)
+# tag_list = np.reshape(tag_list, ( len(tag_list), 1 ))
+# print ( tag_list)
+# print("------------")
+# print ( image_list)
+# images_np = np.array(image_list)
+# print ( images_np)
 
 
-stack = np.zeros((0,2))
-for key, _ in enumerate(image_list):
-    stack = np.append( stack, [(np.array([ id_list[key], image_list[key] ]))], axis=0)
-print( "------------------")
-print( stack)
+# stack = np.zeros((0,2))
+# for key, _ in enumerate(image_list):
+#     stack = np.append( stack, [(np.array([ id_list[key], image_list[key] ]))], axis=0)
+# print( "------------------")
+# print( stack)
 
 
-#stack = np.vstack((tag_list, images_np ))
-print ( stack)
-arrays_list = np.zeros((3,2,1))
-print ( arrays_list)
-arrays_list[:] = tag_list[:],images_np[:]
-print(arrays_list)
+# #stack = np.vstack((tag_list, images_np ))
+# print ( stack)
+# arrays_list = np.zeros((3,2,1))
+# print ( arrays_list)
+# arrays_list[:] = tag_list[:],images_np[:]
+# print(arrays_list)
 
 

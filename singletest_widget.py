@@ -62,7 +62,7 @@ class Singletest_widget(QtWidgets.QWidget):
         self.change_dataset(dataset_widget.Dataset_Widget().name_image)
         self.combo_box.currentTextChanged.connect(self.update_image)
 
-        self.classify_button.clicked.connect(self.classify_action)
+        # self.classify_button.clicked.connect(self.classify_action)
         
 
     @Slot()

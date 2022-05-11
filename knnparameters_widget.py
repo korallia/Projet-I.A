@@ -59,9 +59,9 @@ class Knnparameters_widget(QtWidgets.QWidget):
         self.scroll_bar_1.value = 0
         self.scroll_bar_2.value = 0
         self.scroll_bar_1.set_minimum = 0
-        self.scroll_bar_1.maximum = 1000
+        self.scroll_bar_1.maximum = 10
         self.scroll_bar_2.set_minimum = 0
-        self.scroll_bar_2.maximum = 100
+        self.scroll_bar_2.maximum = 1000
 
     
         

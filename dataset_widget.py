@@ -33,6 +33,7 @@ class Dataset_Widget(QtWidgets.QWidget):
         self.dataset_list = self.klustr_dao.available_datasets
         self.binary_image_list = []
         self.binary_image_tag_list = []
+        self.tag_list_dictionary = {}
         
 
         self.main_layout = QVBoxLayout()
@@ -112,11 +113,18 @@ class Dataset_Widget(QtWidgets.QWidget):
         for i in self.klustr_dao.image_from_dataset(name_image, True):
             image = qimage_argb32_from_png_decoding(i[6])
             self.binary_image_list.append(ndarray_from_qimage_argb32(image))
+        pass
     
     def generate_training_image_tag_list(self, name_image):
         self.binary_image_tag_list.clear()
+        self.tag_list_dictionary.clear()
         for i in self.klustr_dao.image_from_dataset(name_image, True):
             self.binary_image_tag_list.append(i[3])
+            self.tag_list_dictionary[i[2]] = i[3]
+        print(self.binary_image_tag_list)
+        print("-----------------Q(-'.'-Q)-------------")
+        print(self.tag_list_dictionary)
+        
 
 
     def set_credentials(self):
