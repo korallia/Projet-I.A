@@ -94,6 +94,14 @@ class Knnparameters_widget(QtWidgets.QWidget):
     @property
     def max_distance(self):
         return self.__max_distance/1000
+    @property
+    def widget_size(self):
+        return self.__widget_size
+    
+    @widget_size.setter
+    def widget_size(self,value):
+        self.__widget_size = value
+
     
     
 
