@@ -6,6 +6,7 @@ from db_credential import PostgreSQLCredential
 from klustr_dao import PostgreSQLKlustRDAO
 from klustr_utils import qimage_argb32_from_png_decoding, ndarray_from_qimage_argb32
 from klustr_widget import KlustRDataSourceViewWidget
+from dataset_widget import Dataset_Widget
 
 import numpy as np
 from numpy import matrix
@@ -32,7 +33,7 @@ class Singletest_widget(QtWidgets.QWidget):
         self.klustr_dao = None
         self.set_credentials()
         self.image_binaire = None
-
+        self.dataset_widget = Dataset_Widget()
 
 
         self.main_layout = QVBoxLayout()
@@ -59,7 +60,7 @@ class Singletest_widget(QtWidgets.QWidget):
         self.container_groupbox.set_layout(self.submain_layout)
         self.main_layout.add_widget(self.container_groupbox)
         self.set_layout(self.main_layout)
-        self.change_dataset(dataset_widget.Dataset_Widget().name_image)
+        self.change_dataset(self.dataset_widget.dataset_name)
         self.combo_box.currentTextChanged.connect(self.update_image)
 
         # self.classify_button.clicked.connect(self.classify_action)

@@ -19,8 +19,8 @@ from PySide6.QtGui import  (QImage, QPixmap, QIcon, QPainter, QFont, QPen, QBrus
 from __feature__ import snake_case, true_property 
 
 class Knnparameters_widget(QtWidgets.QWidget):
-    knn_changed = Signal(int)
-    max_dist_changed = Signal(int)
+    nb_voisins_changed = Signal(int)
+    max_distance_changed = Signal(int)
 
 
 
@@ -28,64 +28,54 @@ class Knnparameters_widget(QtWidgets.QWidget):
         super().__init__(parent)
         self.__widget_size = QSize(200, 200)
         self.__main_layout = QVBoxLayout()
+        self.__submain_layout = QVBoxLayout()
+        self.__groupbox = QGroupBox("KNN parameters")
+
         self.__nb_voisins = 3
+        self.__scrollbar_voisins = QScrollBar()
+        self.__nb_voisins_label = QLabel(f"K = {self.__nb_voisins}" )
+        self.__nb_voisins_label.alignment = Qt.AlignCenter
+        self.__nb_voisins_layout = QHBoxLayout()
+        self.__nb_voisins_layout.add_widget(self.__nb_voisins_label)
+        self.__nb_voisins_layout.add_widget(self.__scrollbar_voisins)
+        self.__scrollbar_voisins.orientation = Qt.Horizontal
+        self.__scrollbar_voisins.fixed_width = 200
+        self.__scrollbar_voisins.value = 3
+        self.__scrollbar_voisins.minimum = 2
+        self.__scrollbar_voisins.maximum = 10
+        self.__scrollbar_voisins.valueChanged.connect(self.update_scroll)
+
         self.__max_distance = 1
+        self.__scrollbar_max_distance = QScrollBar()
+        self.__max_distance_label = QLabel(f"Max dist = {self.__max_distance}") 
+        self.__max_distance_label.alignment = Qt.AlignCenter     
+        self.__max_distance_layout = QHBoxLayout()
+        self.__max_distance_layout.add_widget(self.__max_distance_label)
+        self.__max_distance_layout.add_widget(self.__scrollbar_max_distance)
+        self.__scrollbar_max_distance.orientation = Qt.Horizontal
+        self.__scrollbar_max_distance.fixed_width = 200
+        self.__scrollbar_max_distance.minimum = 1
+        self.__scrollbar_max_distance.maximum = 1000
+        self.__scrollbar_max_distance.value = 1000
+        self.__scrollbar_max_distance.valueChanged.connect(self.update_scroll)     
 
+        self.__submain_layout.add_layout(self.__nb_voisins_layout)
+        self.__submain_layout.add_layout(self.__max_distance_layout)
 
-        submain_layout = QVBoxLayout()
-        container_groupbox = QGroupBox("Knn parameters")
-        self.scroll_bar_1 = QScrollBar()
-        self.scroll_bar_2 = QScrollBar()
-        self.knn_value = QLabel(f"K = {self.__nb_voisins}" )
-        self.knn_value.alignment = Qt.AlignCenter
-        self.max_dist = QLabel(f"Max dist = {self.__max_distance}") 
-        self.max_dist.alignment = Qt.AlignCenter                        
+        self.__groupbox.set_layout(self.__submain_layout)
+
+        self.__main_layout.add_widget(self.__groupbox)
         
-        
-        
-        param_1_layout = QHBoxLayout()
-        param_2_layout = QHBoxLayout()
-
-        param_1_layout.add_widget(self.knn_value)
-        param_1_layout.add_widget(self.scroll_bar_1)
-        param_2_layout.add_widget(self.max_dist)
-        param_2_layout.add_widget(self.scroll_bar_2)
-
-        self.scroll_bar_1.orientation = Qt.Horizontal
-        self.scroll_bar_2.orientation = Qt.Horizontal
-        self.scroll_bar_1.fixed_width = 200
-        self.scroll_bar_2.fixed_width = 200
-        self.scroll_bar_1.value = 3
-        
-        self.scroll_bar_1.set_minimum = 0
-        self.scroll_bar_1.maximum = 10
-        self.scroll_bar_2.set_minimum = 0
-        self.scroll_bar_2.maximum = 1000
-        self.scroll_bar_2.value = 1000
-        self.scroll_bar_1.valueChanged.connect(self.update_scroll)
-        self.scroll_bar_2.valueChanged.connect(self.update_scroll)
-
-        submain_layout.add_layout(param_1_layout)
-        submain_layout.add_layout(param_2_layout)
-
-       
-        container_groupbox.set_layout(submain_layout)
-
-
-        self.__main_layout.add_widget(container_groupbox)
-        
-
         self.set_layout(self.__main_layout) 
 
     @Slot()
     def update_scroll(self):
-        self.__nb_voisins =  self.scroll_bar_1.value
-        self.__max_distance = self.scroll_bar_2.value
-
-        self.knn_value.text = (f"K = {self.__nb_voisins}")
-        self.max_dist.text = (f"Max dist = {self.__max_distance/1000}")
-        self.knn_changed.emit(self.__nb_voisins)
-        self.max_dist_changed.emit(self.__max_distance)
+        self.__nb_voisins =  self.__scrollbar_voisins.value
+        self.__max_distance = self.__scrollbar_max_distance.value
+        self.__nb_voisins_label.text = (f"K = {self.__nb_voisins}")
+        self.__max_distance_label.text = (f"Max dist = {self.__max_distance/1000}")
+        self.nb_voisins_changed.emit(self.__nb_voisins)
+        self.max_distance_changed.emit(self.__max_distance)
 
     @property
     def nb_voisins(self):
@@ -101,25 +91,3 @@ class Knnparameters_widget(QtWidgets.QWidget):
     @widget_size.setter
     def widget_size(self,value):
         self.__widget_size = value
-
-    
-    
-
-        
-
-        
-        
-    
-    
-    
-
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-
-    demo = Knnparameters_widget()
-    demo.window_title = 'Main'
-    demo.show()
-
-    sys.exit(app.exec_())  

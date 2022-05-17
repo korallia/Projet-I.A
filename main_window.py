@@ -8,7 +8,6 @@ from klustr_widget import KlustRDataSourceViewWidget
 from dataset_widget import Dataset_Widget
 from singletest_widget import Singletest_widget
 from knnparameters_widget import Knnparameters_widget
-from mpl_scatter_plot import MPL_Scatter_plot
 from ImageProcessing import image_processe
 from KNN import KNN
 
@@ -85,18 +84,16 @@ class Main_window(QtWidgets.QMainWindow):
         self.tab_widget.single_test_widget.classify_button.clicked.connect(self.knn_function_placeholder)
 
 
-        self.tab_widget.knnparameters_widget.knn_changed.connect(self.actualize_knn_parameters)
-        self.tab_widget.knnparameters_widget.max_dist_changed.connect(self.actualize_knn_parameters)
+        self.tab_widget.knnparameters_widget.nb_voisins_changed.connect(self.actualize_knn_parameters)
+        self.tab_widget.knnparameters_widget.max_distance_changed.connect(self.actualize_knn_parameters)
 
 
         self.set_central_widget(self.tab_widget)  
 
     def get_infos_knn_from_dataset(self):
-        self.tag_image_list = self.tab_widget.dataset_widget.tag_list_of_converted_image
-        self.binary_image_list = self.tab_widget.dataset_widget.image_converted_to_binary
-        self.tag_dictionary = self.tab_widget.dataset_widget.tag_list_dictionary
-        print(self.tag_image_list)
-        print(self.binary_image_list)
+        self.tag_image_list = self.tab_widget.dataset_widget.binary_image_tag_list
+        self.binary_image_list = self.tab_widget.dataset_widget.binary_image_list
+        self.tag_dictionary = self.tab_widget.dataset_widget.tag_list_indexes
         self.image_processor.load_practice_images(self.binary_image_list, list(self.tag_dictionary.keys()), self.KNN)
         self.tab_widget.conteneur_graphique_3d.training_dataset = self.KNN.espace_solution
        
