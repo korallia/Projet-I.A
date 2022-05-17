@@ -73,8 +73,7 @@ class Main_window(QtWidgets.QMainWindow):
         self.tag_image_list = []
         self.binary_image_list = []
         self.image_to_identify = None
-        self.knn_value = None
-        self.knn_max_dist_value = None
+
         self.KNN = KNN()
         self.image_processor = image_processe()
 
@@ -86,8 +85,8 @@ class Main_window(QtWidgets.QMainWindow):
         self.tab_widget.single_test_widget.classify_button.clicked.connect(self.knn_function_placeholder)
 
 
-        self.tab_widget.knnparameters_widget.knn_changed.connect(self.get_infos_knn_parameters)
-        self.tab_widget.knnparameters_widget.max_dist_changed.connect(self.get_infos_knn_parameters)
+        self.tab_widget.knnparameters_widget.knn_changed.connect(self.actualize_knn_parameters)
+        self.tab_widget.knnparameters_widget.max_dist_changed.connect(self.actualize_knn_parameters)
 
 
         self.set_central_widget(self.tab_widget)  
@@ -108,13 +107,11 @@ class Main_window(QtWidgets.QMainWindow):
         print(self.image_to_identify)
         pass
 
-    def get_infos_knn_parameters(self):
-        self.knn_value = self.tab_widget.knnparameters_widget.knn_actual_value
-        self.knn_max_dist_value = self.tab_widget.knnparameters_widget.knn_max_dist
-        #print(self.knn_value)
-        #print(self.knn_max_dist_value)
-        self.KNN.nbr_voisins = self.knn_value
-        self.KNN.max_distance = self.knn_max_dist_value
+    def actualize_knn_parameters(self):
+        knn_nb_voisins = self.tab_widget.knnparameters_widget.nb_voisins
+        knn_max_distance = self.tab_widget.knnparameters_widget.max_distance
+        self.KNN.nbr_voisins =  knn_nb_voisins
+        self.KNN.max_distance = knn_max_distance
 
     def knn_function_placeholder(self):
         #intervient quand classify is clicked
@@ -123,7 +120,6 @@ class Main_window(QtWidgets.QMainWindow):
         tag = self.tag_dictionary[id]
         print(tag)
         self.tab_widget.single_test_widget.label_text.text = tag
-        print("VIEUX CHIEN VACHE")
         
 
 if __name__ == '__main__':
