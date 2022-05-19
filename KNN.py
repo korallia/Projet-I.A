@@ -34,13 +34,10 @@ class KNN:
     def __determiner_type(self,resultat):
 
         resultats = resultat[resultat[:,0]<self.__max_distance]
-
         indexes = resultat[:,1].astype(int)
-        print(indexes)
         counts = np.bincount(indexes)
-        print( counts)
         plusfrequents = np.argpartition(-counts, kth=2)[:2]
-        print( plusfrequents)
+        
         if ( len(plusfrequents)== 2):
           if (counts[plusfrequents[0]] == counts[plusfrequents[1]]):
             return resultats[0][1] # 2 plus frequent, on prend le plus proche    
@@ -48,12 +45,7 @@ class KNN:
             return resultats[plusfrequents[0]][1] # 1 plus frequent on prend lui
         else:
             return resultats[0][1]  # pas 2 frequents, on prend le plus proche
-  
-        
-        
-       
 
-        
                 #public functions
     @property
     def nbr_voisins(self):
@@ -105,31 +97,4 @@ class KNN:
         resultat =self.__calcule_distance(image)
         typ = self.__determiner_type(resultat)
         return typ
-
-       
-       
-
-   
-        
-knn = KNN()
-images_a_ajouter = np.array(
-    [
-        [1,2,1,1],
-        [1,4,1,1],
-        [1,1,7,2],
-        [1,3,1,3],
-        [1,1,8,1]
-        ]
-        )
-#knn.rajouter_image_a_espace_solution(images_a_ajouter)
-#point = np.array([1,4,6])
-#knn.calcule_distance(point)        
-knn.max_distance = 2
-print(knn.max_distance)
-
-        
-
-
-        
-
 

@@ -3,99 +3,101 @@ import numpy as np
 
 from KNN import KNN
 
-class image_processe:
+class Image_Processor:
         def __init__(self):
-            self.__nbr_index = 3
+            self.__nbr_metrics = 3
             self.__private = True
+            
+
+        def __inverseur(self,image):
+            forme = np.where(image[:] < 1, 1, 0)
+            return forme
 
     #fonction privé
         def __calculPerimetre(self,image):
             rslt = (np.zeros(image.shape)).astype(int)
+            
+            # perimetre_level2 = ((2**0.5)-1))
 
-    #[ from-inclus : to-exclus : step ]
+            #[ from-inclus : to-exclus : step ]
             gauche = image[1:-1, 0:-2]        
             droite = image[1:-1, 2:]          
             courant = image[1:-1, 1:-1]        
             haut = image[0:-2, 1:-1]        
-            bas = image[2:, 1:-1]          
+            bas = image[2:, 1:-1]   
+            # enhaut_adroite = image[0:-2,  2: ]
+    
 
             rslt[1:-1, 1:-1] =  np.logical_or(                                                           
                     np.logical_or(np.logical_and(courant==1, gauche==0), np.logical_and(courant==1, droite==0)),      
                     np.logical_or(np.logical_and(courant==1, haut==0), np.logical_and(courant==1, bas==0))       
                     )
             
-            """ méthode 2 périmetre non compléter
-             x,y =np.meshgrid(np.arange(rslt.shape[1]),np.arange(rslt.shape[0]))
-             coordoner = x[:] + (rslt.shape[1]* y)
-            print(coordoner)
-            print("********")
-            coordoner_perimetre = coordoner[rslt==1]
-            print(coordoner_perimetre)
-            divided = coordoner_perimetre[:]/coordoner.shape[1]
-            modulo = coordoner_perimetre[:]%coordoner.shape[1]
-            print(divided)
-            print(modulo)
-            print(coordoner.shape)
-            droite_perimetre = coordoner_perimetre[1:-1]
-            print(droite_perimetre)
-            perimetre = np.sum( ((coordoner_perimetre + droite_perimetre)**2))**0.5
-             perimetre = (np.sum( coordoner_perimetre)**2 + np.sum(droite_perimetre) **2)**0.5
+            # diagauche = np.diagonal(rslt)
+            # print("---------BING BONG--------") 
+            # print(rslt)   
+            # x,y =np.meshgrid(np.arange(rslt.shape[1]),np.arange(rslt.shape[0]))
+            # coordoner = x[:] + (rslt.shape[1]* y)
+            # print(coordoner)
+            # print("********")
+            # coordoner_perimetre = coordoner[rslt==1]
+            # print(coordoner_perimetre)
+            # print(coordoner.shape)
+            # droite_perimetre = coordoner_perimetre[1:-1]
+            # print(droite_perimetre)
+            # perimetre = np.sum( ((coordoner_perimetre + droite_perimetre)**2))**0.5
+            # perimetre = (np.sum( coordoner_perimetre)**2 + np.sum(droite_perimetre) **2)**0.5
 
-            print(perimetre)
-            """
-            print(rslt)
-            return np.sum(rslt[rslt==1])
+            # print(perimetre)
             
-
-           
+            # print(rslt)
+            return rslt
+            # return np.sum(rslt[rslt==1])
+            
         def __calculAire(self,image):
-            return np.sum(image[image==1])
+            return np.sum(image)
 
         def __centroidYX(self, image):
             aire = self.__calculAire(image)
             c, r = np.meshgrid(np.arange(image.shape[1]), np.arange(image.shape[0]))
             return (np.sum(r * image), np.sum(c * image)) / aire
         
-        def __distance_centroide(self, image):
-            centroide= self.__centroidYX(image)
-
-        # Créer un meshgrid avec dimensions de notre image
+        def distance_centroide(self, image):
+            centroide = self.__centroidYX(image)
             c, r = np.meshgrid(np.arange(image.shape[1]), np.arange(image.shape[0]))
-            print("image.shape[0]: ", image.shape[0], 
-                "\timage.shape[1]: ", image.shape[1], 
-                "\timage.shape: ", image.shape)
-
-        # Sortir les coord des 1 de l'image avec les 2 matrices retournees par le meshgrid
-        # print("\nles X des cases avec des 1:\n", c[image>0])
-        # print("les Y des cases avec des 1:\n", r[image>0])
-
-        # Créer une matrice unidimensionnelle pour stocker les calculs de distance
-            calcul = np.zeros((c[image>0].shape[0]))
-            calcul[:] = (   (c[image>0] - centroide[1])**2 + 
-                        (r[image>0] - centroide[0])**2      )**0.5    
+            calcul = np.zeros((c[image > 0].shape[0]))
+            calcul[:] = ((c[image > 0] - centroide[1]) ** 2 +
+                         (r[image > 0] - centroide[0]) ** 2) ** 0.5
             return calcul
-        # Avec la matrice de distances, on fait np.std(calcul) et ça donne l'écart-type (O)
-        # On peut, je crois, "normaliser" l'écart-type (O), avec le range, en faisant : 
-        # 2 x écart-type / range, donc  : 2*(O) / (max-min), 
-        # car le range est toujours plus grand que 6 * écart-types pour 99.9...%, 
-        # donc on aura un quotient plus petit que 1...
+
+        def distance_centroide_peri(self, image):
+            centroide = self.__centroidYX(image)
+            data_perimetre = self.__calculPerimetre(image)
+            d, s = np.meshgrid(np.arange(data_perimetre.shape[1]), np.arange(data_perimetre.shape[0]))
+            calcul1 = np.zeros((d[data_perimetre > 0].shape[0]))
+            calcul1[:] = ((d[data_perimetre > 0] - centroide[1]) ** 2 +
+                          (s[data_perimetre > 0] - centroide[0]) ** 2) ** 0.5
+            return calcul1
 
         def __calculComplexite(self,image):
             perimetre = self.__calculPerimetre(image)
+            somme = np.sum(perimetre)
             aire = self.__calculAire(image)
 
-            c= ((4*np.pi*aire)/perimetre**2)
-            simpliciter = 1 -c
-            return abs(simpliciter)
+            c= ((4*np.pi*aire)/somme**2)
+            simpliciter = 1 - c
+            return simpliciter
 
         def __rayon_i_sur_c(self,image):
-            data_distance = self.__distance_centroide(image)
-            min =  np.min(data_distance)
+            data_distance = self.distance_centroide(image)
+            data_distance_peri = self.distance_centroide_peri(image)
+            min =  np.min(data_distance_peri)
             max = np.max(data_distance)
             return   min/max
+
         def __aire_sur_aire_c(self,image):
             data_aire = self.__calculAire(image)
-            data_distance = self.__distance_centroide(image)
+            data_distance = self.distance_centroide(image)
             max = np.max(data_distance)
             aire_circonscrit = np.pi*max**2       
             return data_aire / aire_circonscrit 
@@ -104,14 +106,14 @@ class image_processe:
             if ( len(arrayimage) == 2 ):
                 tag = arrayimage[0]
                 image  = arrayimage[1]
-                print(image)
-                print("S'il-vous-plait biensur")
+                forme = self.__inverseur(image)
             else:
                 image = arrayimage
+                forme = self.__inverseur(image)
                 tag = ""
-            indice1 = self.__calculComplexite(image)
-            indice2 = self.__rayon_i_sur_c(image)
-            indice3 = self.__aire_sur_aire_c(image)
+            indice1 = self.__calculComplexite(forme)
+            indice2 = self.__rayon_i_sur_c(forme)
+            indice3 = self.__aire_sur_aire_c(forme)
 
 
             if (tag != ""):
@@ -137,36 +139,50 @@ class image_processe:
 
         
         def load_practice_images(self, images,taglist,knn):
-            # print(images)
-            # print("-----------------Q(-'.'-Q)-------------")
-            # print(taglist)
             
-            stack = np.zeros((0,2))
+            stack = np.zeros((0,2), dtype=float)
             for key, _ in enumerate(images):
                 stack = np.append( stack, [(np.array([ taglist[key], images[key] ]))], axis=0)
-            print(stack)
             func = np.vectorize(self.__singleImageProcessing,  signature='(m)->(o)')
             processed = func(stack)
             
             knn.rajouter_image_a_espace_solution(processed)
-           
 
+        # def process_unknown_image(self, image, knn):
+        #
+        #     processed = self.__singleImageProcessing(image)
+        #     image_processee[0, 0:3] = processed
+        #     image_processee[0, 3] = knn.algo_knn(processed)
+        #     return image_processee
+#INTELLI_J
         def process_unknown_image(self, image,knn):
-            processed = np.array( self.__singleImageProcessing(image))
-            return knn.algo_knn(processed)
-            
-
-
+            test_image_metrics = np.zeros((4), dtype=float)#.astype(np.uint8)
+            processed = self.__singleImageProcessing(image)
+            tag = knn.algo_knn(processed)
+            test_image_metrics[0:3] = processed
+            test_image_metrics[3] = tag
+            return test_image_metrics
 
 # image_a_calculer = np.array([
-#         [0,0,0,0,0,0],          # Gros rectangle
-#         [0,0,0,0,0,0], 
-#         [0,1,1,1,0,0], 
-#         [0,1,1,1,0,0], 
-#         [0,1,1,1,0,0], 
-#         [0,0,0,0,0,0],
-#         [0,0,0,0,0,0]   
+       
+#         [0,0,0,0,0,0,0,0,0],        # Cercle
+#         [0,0,0,1,1,1,0,0,0], 
+#         [0,0,1,1,1,1,1,0,0], 
+#         [0,1,1,1,1,1,1,1,0], 
+#         [0,1,1,1,1,1,1,1,0], 
+#         [0,1,1,1,1,1,1,1,0], 
+#         [0,0,1,1,1,1,1,0,0],
+#         [0,0,0,1,1,1,0,0,0],
+#         [0,0,0,0,0,0,0,0,0]
+        
 #     ])
+
+
+# imgpro = Image_Processor()
+# imgpro.calculPerimetre(image_a_calculer)
+
+
+
 # image1 = np.array([
 #         [0,0,0,0,0,0],          # Gros rectangle
 #         [0,0,0,0,0,0], 
@@ -278,43 +294,3 @@ class image_processe:
 #          ])]
 #       ]
 #     ])
-      
-
-# #imgpro = image_processe()
-# #imgpro.load_practice_images(images_a_calculer)
-# #type = imgPro.process_unknown_image(image_a_calculer)
-# #
-# # print(nom_images[type])
-# #print(images_a_calculer[:,0])
-# #array = np.zeros((2,2,1))
-# print("-----------")
-# id_list = [1,2,3]
-# #array[:,0,0] = id_list
-# #array[:,1,0] = image_list
-
-
-
-# tag_list = np.array(id_list)
-# print ( tag_list)
-# tag_list = np.reshape(tag_list, ( len(tag_list), 1 ))
-# print ( tag_list)
-# print("------------")
-# print ( image_list)
-# images_np = np.array(image_list)
-# print ( images_np)
-
-
-# stack = np.zeros((0,2))
-# for key, _ in enumerate(image_list):
-#     stack = np.append( stack, [(np.array([ id_list[key], image_list[key] ]))], axis=0)
-# print( "------------------")
-# print( stack)
-
-
-# #stack = np.vstack((tag_list, images_np ))
-# print ( stack)
-# arrays_list = np.zeros((3,2,1))
-# print ( arrays_list)
-# arrays_list[:] = tag_list[:],images_np[:]
-# print(arrays_list)
-
